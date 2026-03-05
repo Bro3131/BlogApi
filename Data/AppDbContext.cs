@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BlogApi.Configuration;
 using BlogApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Data
 {
@@ -10,5 +11,12 @@ namespace BlogApi.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new UserConfig());
+            modelBuilder.ApplyConfiguration(new PostConfig());
+            modelBuilder.ApplyConfiguration(new CommentConfig());
+        }
     }
 }

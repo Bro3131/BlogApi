@@ -1,11 +1,11 @@
-﻿namespace BlogApi.Models
+﻿using BlogApi.Models;
+
+namespace BlogApi.DTO
 {
-    public class Post : BaseId
+    public class PostDto : BaseId
     {
         public string Title { get; set; }
         public string Content { get; set; }
-
         public int UserId { get; set; }
-        public User User { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 using BlogApi.Data;
 using BlogApi.Interfaces;
+using BlogApi.Persistence;
 using BlogApi.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,21 +16,25 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 
 builder.Services.AddSwaggerGen();
 
-
 var app = builder.Build();
-
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    DataSeeder.Seed(db);
+}
 
 app.Run();

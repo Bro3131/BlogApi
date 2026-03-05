@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using BlogApi.Models;
+using BlogApi.DTO;
 using BlogApi.Interfaces;
+using Mapster;
 
 namespace BlogApi.Controllers
 {
@@ -30,8 +32,9 @@ namespace BlogApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Post post)
+        public async Task<IActionResult> Create(PostDto dto)
         {
+            var post = dto.Adapt<Post>();
             await _postService.CreateAsync(post);
             return Ok(post);
         }
@@ -42,12 +45,12 @@ namespace BlogApi.Controllers
             return Ok();
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Post post)
+        public async Task<IActionResult> Update(int id, PostDto dto)
         {
-            if (id != post.Id)
-            {
-                return BadRequest("ID mismatch");
-            }
+
+            var post = dto.Adapt<Post>();
+
+            post.Id = id;
             await _postService.UpdateAsync(post);
             return Ok(post);
         }

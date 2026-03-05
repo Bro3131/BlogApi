@@ -3,35 +3,36 @@ using BlogApi.Models;
 using BlogApi.Data;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace BlogApi.Services
 {
-    public class PostService : IPostService
+    public class UserService : IUserService
     {
-        private readonly IRepository<Post> _repository;
+        private readonly IRepository<User> _repository;
 
-        public PostService(IRepository<Post> repository)
+        public UserService(IRepository<User> repository)
         {
             _repository = repository;
         }
 
-        public async Task<List<Post>> GetAllAsync()
+        public async Task<List<User>> GetAllAsync()
         {
             return await _repository.GetAllAsync();
         }
 
-        public async Task<Post> GetByIdAsync(int id)
+        public async Task<User> GetByIdAsync(int id)
         {
             return await _repository.GetByIdAsync(id);
         }
 
-        public async Task CreateAsync(Post post)
+        public async Task CreateAsync(User user)
         {
-            await _repository.CreateAsync(post);
+            await _repository.CreateAsync(user);
         }
 
-        public async Task UpdateAsync(Post post)
+        public async Task UpdateAsync(User user)
         {
-            await _repository.UpdateAsync(post);
+            await _repository.UpdateAsync(user);
         }
 
         public async Task DeleteAsync(int id)

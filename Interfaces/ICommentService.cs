@@ -8,5 +8,6 @@ namespace BlogApi.Interfaces
         Task CreateAsync(Comment comment);
         Task DeleteAsync(int id);
         Task UpdateAsync(Comment comment);
+        
     }
 }
