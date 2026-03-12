@@ -1,8 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using BlogApi.Models;
 using BlogApi.DTO;
 using BlogApi.Interfaces;
+using BlogApi.Models;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers
 {
@@ -18,12 +19,14 @@ namespace BlogApi.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {
             var posts = await _postService.GetAllAsync();
             return Ok(posts);
         }
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetById(int id)
         {
             var post = await _postService.GetByIdAsync(id);
@@ -32,6 +35,7 @@ namespace BlogApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Create(PostDto dto)
         {
             var post = dto.Adapt<Post>();
@@ -39,12 +43,14 @@ namespace BlogApi.Controllers
             return Ok(post);
         }
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             await _postService.DeleteAsync(id);
             return Ok();
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, PostDto dto)
         {
 

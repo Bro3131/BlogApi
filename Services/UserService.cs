@@ -1,6 +1,7 @@
-﻿using BlogApi.Interfaces;
+﻿using BlogApi.Data;
+using BlogApi.Interfaces;
 using BlogApi.Models;
-using BlogApi.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -8,36 +9,38 @@ namespace BlogApi.Services
 {
     public class UserService : IUserService
     {
-        private readonly IRepository<User> _repository;
+        private readonly UserManager<User> _userManager;
 
-        public UserService(IRepository<User> repository)
+        public UserService(UserManager<User> userManager)
         {
-            _repository = repository;
+            _userManager = userManager;
         }
 
         public async Task<List<User>> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            return await _userManager.Users.ToListAsync();
         }
 
         public async Task<User> GetByIdAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            return await _userManager.FindByIdAsync(id.ToString());
         }
 
         public async Task CreateAsync(User user)
         {
-            await _repository.CreateAsync(user);
+            await _userManager.CreateAsync(user);
         }
 
         public async Task UpdateAsync(User user)
         {
-            await _repository.UpdateAsync(user);
+            await _userManager.UpdateAsync(user);
         }
 
         public async Task DeleteAsync(int id)
         {
-            await _repository.DeleteAsync(id);
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user != null)
+                await _userManager.DeleteAsync(user);
         }
     }
 }

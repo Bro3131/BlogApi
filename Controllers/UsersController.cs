@@ -1,8 +1,9 @@
 ﻿using BlogApi.DTO;
 using BlogApi.Interfaces;
 using BlogApi.Models;
-using Microsoft.AspNetCore.Mvc;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers
 {
@@ -18,6 +19,7 @@ namespace BlogApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var users = await _userService.GetAllAsync();
@@ -25,6 +27,7 @@ namespace BlogApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var user = await _userService.GetByIdAsync(id);
@@ -33,6 +36,7 @@ namespace BlogApi.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Create(UserDto dto)
         {
             var user = dto.Adapt<User>();
@@ -41,7 +45,8 @@ namespace BlogApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, UserDto dto)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(string id, UserDto dto)
         {
             var user = dto.Adapt<User>();
             user.Id = id;
@@ -50,6 +55,7 @@ namespace BlogApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             await _userService.DeleteAsync(id);

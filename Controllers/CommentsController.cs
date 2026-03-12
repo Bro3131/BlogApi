@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using BlogApi.Models;
-using BlogApi.DTO;
-using Mapster;
+﻿using BlogApi.DTO;
 using BlogApi.Interfaces;
+using BlogApi.Models;
+using Mapster;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers
 {
@@ -18,6 +19,7 @@ namespace BlogApi.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {
             var comment = await _commentService.GetAllAsync();
@@ -26,6 +28,7 @@ namespace BlogApi.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Create(CommentDto dto)
         {
             
@@ -34,20 +37,19 @@ namespace BlogApi.Controllers
             return Ok(comment);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             await _commentService.DeleteAsync(id);
             return Ok();
         }
         [HttpPut("update-comment")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(CommentDto dto)
         {
             var comment = dto.Adapt<Comment>();
             await _commentService.UpdateAsync(comment);
             return Ok(comment);
-
         }
-
-
     }
 }

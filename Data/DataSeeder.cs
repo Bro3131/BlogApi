@@ -1,25 +1,36 @@
 ﻿using BlogApi.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BlogApi.Data
 {
     public static class DataSeeder
     {
-        public static void Seed(AppDbContext db)
+        public static async Task SeedAsync(IServiceProvider services)
         {
-            // if admin user already exists - skip 
-            if (db.Users.Any(u => u.Role == Role.Admin))
-                return;
+            var userManager = services.GetRequiredService<UserManager<User>>();
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            var admin = new User
+            
+            string[] roles = { "Admin", "User", "Guest" };
+            foreach (var role in roles)
             {
-                Username = "admin",
-                Email = "admin@blog.com",
-                Password = "123",
-                Role = Role.Admin
-            };
+                if (!await roleManager.RoleExistsAsync(role))
+                    await roleManager.CreateAsync(new IdentityRole(role));
+            }
 
-            db.Users.Add(admin);
-            db.SaveChanges();
+            //create if no admin
+            if (await userManager.FindByNameAsync("admin") == null)
+            {
+                var admin = new User
+                {
+                    UserName = "admin",
+                    Email = "admin@blog.com",
+                    Role = Role.Admin
+                };
+
+                await userManager.CreateAsync(admin, "admin123");
+                await userManager.AddToRoleAsync(admin, "Admin");
+            }
         }
     }
 }
